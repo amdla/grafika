@@ -27,9 +27,9 @@ cube_data = [
 
 class Camera:
     def __init__(self):
-        self.pos = [0, 0, 0]  # Closer position
-        self.yaw = math.radians(225)  # Face southwest
-        self.pitch = math.radians(-30)  # Look downward
+        self.pos = [1, 9, 3]  # Closer position
+        self.yaw = math.radians(0)  # Face southwest
+        self.pitch = math.radians(-120)  # Look downward
         self.move_speed = 0.5
         self.rot_speed = math.radians(5)
         self.roll = 0  # NEW: Added roll parameter
@@ -141,6 +141,7 @@ class Renderer:
         return sx, sy
 
         # NEW: Roll control methods
+
     def roll_clockwise(self):
         self.camera.roll -= self.camera.rot_speed
         self.render()
@@ -148,6 +149,7 @@ class Renderer:
     def roll_counter_clockwise(self):
         self.camera.roll += self.camera.rot_speed
         self.render()
+
     def render(self):
         self.canvas.delete('all')
 
@@ -171,29 +173,32 @@ class Renderer:
 
     # -------- Camera movement handlers ---------
     def move_forward(self):
-        fwd = self.camera.get_forward_vector()
-        self.camera.pos[0] += fwd[0] * self.camera.move_speed
-        self.camera.pos[1] += fwd[1] * self.camera.move_speed
-        self.camera.pos[2] += fwd[2] * self.camera.move_speed
+        dx = math.sin(self.camera.yaw) * self.camera.move_speed
+        dy = -math.cos(self.camera.yaw) * self.camera.move_speed
+        self.camera.pos[0] += dx
+        self.camera.pos[1] += dy
         self.render()
+
 
     def move_backward(self):
-        fwd = self.camera.get_forward_vector()
-        self.camera.pos[0] -= fwd[0] * self.camera.move_speed
-        self.camera.pos[1] -= fwd[1] * self.camera.move_speed
-        self.camera.pos[2] -= fwd[2] * self.camera.move_speed
-        self.render()
-
-    def move_left(self):
-        right = self.camera.get_right_vector()
-        self.camera.pos[0] -= right[0] * self.camera.move_speed
-        self.camera.pos[1] -= right[1] * self.camera.move_speed
+        dx = math.sin(self.camera.yaw) * self.camera.move_speed
+        dy = -math.cos(self.camera.yaw) * self.camera.move_speed
+        self.camera.pos[0] -= dx
+        self.camera.pos[1] -= dy
         self.render()
 
     def move_right(self):
-        right = self.camera.get_right_vector()
-        self.camera.pos[0] += right[0] * self.camera.move_speed
-        self.camera.pos[1] += right[1] * self.camera.move_speed
+        dx = math.cos(self.camera.yaw) * self.camera.move_speed
+        dy = math.sin(self.camera.yaw) * self.camera.move_speed
+        self.camera.pos[0] += dx
+        self.camera.pos[1] += dy
+        self.render()
+
+    def move_left(self):
+        dx = math.cos(self.camera.yaw) * self.camera.move_speed
+        dy = math.sin(self.camera.yaw) * self.camera.move_speed
+        self.camera.pos[0] -= dx
+        self.camera.pos[1] -= dy
         self.render()
 
     def move_up(self):
