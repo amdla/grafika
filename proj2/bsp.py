@@ -52,45 +52,70 @@ def compute_plane_normal_and_point(polygon):
     return normal, p0
 
 
-def classify_polygon(polygon, plane_normal, plane_point, camera_pos, camera_forward):
+def classify_polygon(polygon, plane_normal, plane_point):
     """
-    Classifies the polygon as being in front of, behind, or split by the plane defined
-    by the polygon and the camera's perspective.
+    Classifies a polygon relative to a plane and splits it if necessary.
+    Returns: (classification, front_polygon, back_polygon)
     """
     EPSILON = 1e-7
-    front_count = 0
-    back_count = 0
+    front_verts = []
+    back_verts = []
+    on_plane = []
 
-    # Calculate the polygon's center to classify it relative to the camera's view
-    poly_center = [sum(x) / len(polygon) for x in zip(*polygon)]  # Average of all vertices
-
-    # Vector from camera to polygon center
-    camera_to_poly = vector_sub(poly_center, camera_pos)
-    # Dot product between camera's forward vector and the vector to the polygon center
-    dot_product = dot(camera_to_poly, camera_forward)
-
+    # Classify each vertex
     for vert in polygon:
         vec = vector_sub(vert, plane_point)
         dist = dot(vec, plane_normal)
         if dist > EPSILON:
-            front_count += 1
+            front_verts.append(vert)
         elif dist < -EPSILON:
-            back_count += 1
+            back_verts.append(vert)
+        else:
+            on_plane.append(vert)
 
-    # Return classification based on both the plane and camera's position
-    if dot_product > 0:
+    # All vertices on the plane or degenerate
+    if not front_verts and not back_verts:
+        return 'on', polygon, None
+
+    # Entirely in front
+    if not back_verts:
         return 'front', polygon, None
-    elif dot_product < 0:
-        return 'back', polygon, None
-    return 'front', polygon, None  # If parallel, treat as front for simplicity
+
+    # Entirely in back
+    if not front_verts:
+        return 'back', None, polygon
+
+    # Split the polygon
+    front_poly = []
+    back_poly = []
+    for i in range(len(polygon)):
+        j = (i + 1) % len(polygon)
+        a = polygon[i]
+        b = polygon[j]
+        a_dist = dot(vector_sub(a, plane_point), plane_normal)
+        b_dist = dot(vector_sub(b, plane_point), plane_normal)
+
+        # Add current vertex
+        if a_dist >= -EPSILON:
+            front_poly.append(a)
+        if a_dist <= EPSILON:
+            back_poly.append(a)
+
+        # Check if edge crosses the plane
+        if (a_dist > EPSILON and b_dist < -EPSILON) or (a_dist < -EPSILON and b_dist > EPSILON):
+            t = (-a_dist) / (b_dist - a_dist)
+            intersect = (
+                a[0] + t * (b[0] - a[0]),
+                a[1] + t * (b[1] - a[1]),
+                a[2] + t * (b[2] - a[2])
+            )
+            front_poly.append(intersect)
+            back_poly.append(intersect)
+
+    return 'split', front_poly, back_poly
 
 
-def build_bsp(polygons, camera_pos, camera_forward):
-    """
-    Recursively build a BSP tree from a list of polygons considering the camera's position
-    and orientation. This function takes into account the camera's viewpoint when determining
-    if polygons are in front of or behind the camera.
-    """
+def build_bsp(polygons):
     if not polygons:
         return None
 
@@ -102,15 +127,19 @@ def build_bsp(polygons, camera_pos, camera_forward):
     back_list = []
 
     for poly in polygons[1:]:
-        ctype, poly_front, poly_back = classify_polygon(poly, plane_normal, plane_point, camera_pos, camera_forward)
+        ctype, poly_front, poly_back = classify_polygon(poly, plane_normal, plane_point)
         if ctype == 'front':
             front_list.append(poly_front)
         elif ctype == 'back':
-            back_list.append(poly_front)
+            back_list.append(poly_back)
+        elif ctype == 'split':
+            if poly_front:
+                front_list.append(poly_front)
+            if poly_back:
+                back_list.append(poly_back)
 
-    root.front = build_bsp(front_list, camera_pos, camera_forward)
-    root.back = build_bsp(back_list, camera_pos, camera_forward)
-
+    root.front = build_bsp(front_list)
+    root.back = build_bsp(back_list)
     return root
 
 

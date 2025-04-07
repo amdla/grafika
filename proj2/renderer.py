@@ -1,7 +1,7 @@
 # renderer.py
 import math
 import tkinter as tk
-from bsp import build_bsp, dot, vector_sub
+from bsp import build_bsp, dot, vector_sub, is_in_front_of_plane
 from cubes import cube_data  # Your existing 3D objects
 
 
@@ -31,7 +31,7 @@ class Renderer:
 
         # Initialize BSP
         self.polygons = cube_data  # Assuming cube_data is a list of polygons (your 3D objects)
-        self.bsp_tree = build_bsp(self.polygons, self.camera.pos, self.camera.get_forward_vector())
+        self.bsp_tree = build_bsp(self.polygons)
 
         self.render()
 
@@ -86,19 +86,15 @@ class Renderer:
         if not bsp_node:
             return
 
-        # Check if the current node is in front or behind the camera
-        dot_product = dot(vector_sub(bsp_node.polygon[0], self.camera.pos), self.camera.get_forward_vector())
-
-        if dot_product > 0:
-            # Render the front part first (closer polygons)
-            self.render_bsp(bsp_node.front)
-            self.render_polygon(bsp_node.polygon)
+        # Check camera position relative to current node's plane
+        if is_in_front_of_plane(self.camera.pos, bsp_node.plane_normal, bsp_node.plane_point):
             self.render_bsp(bsp_node.back)
+            self.render_polygon(bsp_node.polygon)
+            self.render_bsp(bsp_node.front)
         else:
-            # Render the back part first (further polygons)
-            self.render_bsp(bsp_node.back)
-            self.render_polygon(bsp_node.polygon)
             self.render_bsp(bsp_node.front)
+            self.render_polygon(bsp_node.polygon)
+            self.render_bsp(bsp_node.back)
 
     def render_polygon(self, polygon):
         # Convert polygon to 2D points and render it on the canvas
