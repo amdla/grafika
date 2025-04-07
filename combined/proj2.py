@@ -331,31 +331,31 @@ class App:
     # ---------------- Movement & Rotation ----------------
 
     def move_forward(self):
-        dx = math.sin(self.camera.yaw) * self.camera.move_speed
-        dy = -math.cos(self.camera.yaw) * self.camera.move_speed
-        self.camera.pos[0] += dx
-        self.camera.pos[1] += dy
+        fx, fy, fz = self.camera.get_forward()
+        self.camera.pos[0] += fx * self.camera.move_speed
+        self.camera.pos[1] += fy * self.camera.move_speed
+        self.camera.pos[2] += fz * self.camera.move_speed
         self.render()
 
     def move_backward(self):
-        dx = math.sin(self.camera.yaw) * self.camera.move_speed
-        dy = -math.cos(self.camera.yaw) * self.camera.move_speed
-        self.camera.pos[0] -= dx
-        self.camera.pos[1] -= dy
+        fx, fy, fz = self.camera.get_forward()
+        self.camera.pos[0] -= fx * self.camera.move_speed
+        self.camera.pos[1] -= fy * self.camera.move_speed
+        self.camera.pos[2] -= fz * self.camera.move_speed
         self.render()
 
     def move_right(self):
-        dx = math.cos(self.camera.yaw) * self.camera.move_speed
-        dy = math.sin(self.camera.yaw) * self.camera.move_speed
-        self.camera.pos[0] += dx
-        self.camera.pos[1] += dy
+        rx, ry, rz = self.camera.get_right()
+        self.camera.pos[0] += rx * self.camera.move_speed
+        self.camera.pos[1] += ry * self.camera.move_speed
+        self.camera.pos[2] += rz * self.camera.move_speed
         self.render()
 
     def move_left(self):
-        dx = math.cos(self.camera.yaw) * self.camera.move_speed
-        dy = math.sin(self.camera.yaw) * self.camera.move_speed
-        self.camera.pos[0] -= dx
-        self.camera.pos[1] -= dy
+        rx, ry, rz = self.camera.get_right()
+        self.camera.pos[0] -= rx * self.camera.move_speed
+        self.camera.pos[1] -= ry * self.camera.move_speed
+        self.camera.pos[2] -= rz * self.camera.move_speed
         self.render()
 
     def move_up(self):

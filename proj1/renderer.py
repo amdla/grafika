@@ -1,7 +1,8 @@
 import math
 import tkinter as tk
+
 from camera import Camera
-from cubes import cube_data  # if your cube_data is stored in cubes.py
+from cubes import cube_data
 
 
 class Renderer:
@@ -100,7 +101,7 @@ class Renderer:
             p1 = self.project_point(start)
             p2 = self.project_point(end)
             if p1 and p2:
-                self.canvas.create_line(p1[0], p1[1], p2[0], p2[1], fill='blue')
+                self.canvas.create_line(p1[0], p1[1], p2[0], p2[1], fill='black')
 
         self.draw_controls()
 
