@@ -1,8 +1,7 @@
-# renderer.py
 import math
 import tkinter as tk
-from bsp import build_bsp, dot, vector_sub, is_in_front_of_plane
-from cubes import cube_data  # Your existing 3D objects
+from bsp import build_bsp, is_in_front_of_plane
+from cubes import cube_data
 
 
 class Renderer:
@@ -13,7 +12,6 @@ class Renderer:
 
         self.camera = camera
 
-        # Key bindings for camera movement
         self.root.bind('<w>', lambda e: self.move_forward())
         self.root.bind('<s>', lambda e: self.move_backward())
         self.root.bind('<a>', lambda e: self.move_left())
@@ -29,8 +27,7 @@ class Renderer:
 
         self.controls_text = None
 
-        # Initialize BSP
-        self.polygons = cube_data  # Assuming cube_data is a list of polygons (your 3D objects)
+        self.polygons = cube_data
         self.bsp_tree = build_bsp(self.polygons)
 
         self.render()
@@ -53,7 +50,6 @@ class Renderer:
         )
 
     def project_point(self, point):
-        # Project 3D points to 2D using perspective projection
         tx = point[0] - self.camera.pos[0]
         ty = point[1] - self.camera.pos[1]
         tz = point[2] - self.camera.pos[2]
@@ -74,7 +70,7 @@ class Renderer:
         ry_final = rx * sin_r + ry * cos_r
 
         if rz <= 0:
-            return None  # Behind the camera
+            return None
 
         f = 500.0
         scale = f / rz
@@ -86,7 +82,6 @@ class Renderer:
         if not bsp_node:
             return
 
-        # Check camera position relative to current node's plane
         if is_in_front_of_plane(self.camera.pos, bsp_node.plane_normal, bsp_node.plane_point):
             self.render_bsp(bsp_node.back)
             self.render_polygon(bsp_node.polygon)
@@ -97,7 +92,6 @@ class Renderer:
             self.render_bsp(bsp_node.back)
 
     def render_polygon(self, polygon):
-        # Convert polygon to 2D points and render it on the canvas
         projected_points = []
         for vert in polygon:
             p = self.project_point(vert)

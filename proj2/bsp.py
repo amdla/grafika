@@ -21,7 +21,7 @@ class BSPNode:
 
 
 def vector_sub(a, b):
-    return (a[0] - b[0], a[1] - b[1], a[2] - b[2])
+    return a[0] - b[0], a[1] - b[1], a[2] - b[2]
 
 
 def dot(a, b):
@@ -146,4 +146,4 @@ def build_bsp(polygons):
 def is_in_front_of_plane(point, plane_normal, plane_point):
     vec = vector_sub(point, plane_point)
     d = dot(vec, plane_normal)
-    return (d >= 0)
+    return d >= 0

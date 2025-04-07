@@ -15,7 +15,7 @@ class Camera:
         fx = math.cos(self.pitch) * math.sin(self.yaw)
         fy = math.cos(self.pitch) * (-math.cos(self.yaw))
         fz = math.sin(self.pitch)
-        return (fx, fy, fz)
+        return fx, fy, fz
 
     def get_right_vector(self):
         f = self.get_forward_vector()
@@ -23,8 +23,8 @@ class Camera:
         r = cross(f, up)
         length = math.sqrt(r[0] ** 2 + r[1] ** 2 + r[2] ** 2)
         if length < 1e-9:
-            return (0, 0, 0)
-        return (r[0] / length, r[1] / length, r[2] / length)
+            return 0, 0, 0
+        return r[0] / length, r[1] / length, r[2] / length
 
     def get_up_direction(self):
-        return (0, 0, 1)
+        return 0, 0, 1
