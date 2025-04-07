@@ -1,3 +1,7 @@
+import math
+from bsp import cross
+
+
 class Camera:
     def __init__(self):
         self.pos = [1, 11, 5]
@@ -7,14 +11,14 @@ class Camera:
         self.rot_speed = math.radians(5)
         self.roll = 0
 
-    def get_forward(self):
+    def get_forward_vector(self):
         fx = math.cos(self.pitch) * math.sin(self.yaw)
         fy = math.cos(self.pitch) * (-math.cos(self.yaw))
         fz = math.sin(self.pitch)
         return (fx, fy, fz)
 
-    def get_right(self):
-        f = self.get_forward()
+    def get_right_vector(self):
+        f = self.get_forward_vector()
         up = (0, 0, 1)
         r = cross(f, up)
         length = math.sqrt(r[0] ** 2 + r[1] ** 2 + r[2] ** 2)

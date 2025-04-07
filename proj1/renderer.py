@@ -2,7 +2,7 @@ import math
 import tkinter as tk
 
 from camera import Camera
-from cubes import cube_data
+from proj1.cubes import cube_data
 
 
 class Renderer:
