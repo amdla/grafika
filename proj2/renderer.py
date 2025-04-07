@@ -2,7 +2,7 @@
 import math
 import tkinter as tk
 from bsp import build_bsp, dot, vector_sub
-from proj1.cubes import cube_data  # Your existing 3D objects
+from cubes import cube_data  # Your existing 3D objects
 
 
 class Renderer:

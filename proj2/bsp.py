@@ -54,9 +54,8 @@ def compute_plane_normal_and_point(polygon):
 
 def classify_polygon(polygon, plane_normal, plane_point, camera_pos, camera_forward):
     """
-    Tells whether the entire polygon is in front, behind, or straddling
-    the plane defined by (plane_normal, plane_point).
-    Additionally, classify based on camera's position and direction.
+    Classifies the polygon as being in front of, behind, or split by the plane defined
+    by the polygon and the camera's perspective.
     """
     EPSILON = 1e-7
     front_count = 0
@@ -78,18 +77,19 @@ def classify_polygon(polygon, plane_normal, plane_point, camera_pos, camera_forw
         elif dist < -EPSILON:
             back_count += 1
 
-    # If the polygon is in front of the camera, consider it "front" for BSP partitioning
+    # Return classification based on both the plane and camera's position
     if dot_product > 0:
         return 'front', polygon, None
     elif dot_product < 0:
         return 'back', polygon, None
-    # If it's exactly in front or behind (parallel to the camera's view), treat it as front
-    return 'front', polygon, None
+    return 'front', polygon, None  # If parallel, treat as front for simplicity
 
 
 def build_bsp(polygons, camera_pos, camera_forward):
     """
-    Recursively build a BSP tree from a list of polygons, considering the camera's position and orientation.
+    Recursively build a BSP tree from a list of polygons considering the camera's position
+    and orientation. This function takes into account the camera's viewpoint when determining
+    if polygons are in front of or behind the camera.
     """
     if not polygons:
         return None
