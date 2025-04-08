@@ -1,12 +1,15 @@
 import tkinter as tk
 
-from renderer import Renderer
+from camera import CameraApp
+
+from generate_cubes import save_cube_data
 
 
 def main():
+    save_cube_data("cube_data.json")
+
     root = tk.Tk()
-    root.title("3D Renderer")
-    app = Renderer(root)
+    app = CameraApp(root)
     root.mainloop()
 
 
