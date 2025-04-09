@@ -10,14 +10,14 @@ class CameraApp:
         self.canvas = tk.Canvas(root, width=800, height=600)
         self.canvas.pack()
 
-        # Camera parameters
+        # config kamery
         self.position = np.array([3.0, 3.0, -10.0])
         self.move_speed = 0.5
         self.rotation_speed = 0.05
         self.focal_length = 500
         self.rotation_matrix = np.identity(3)
 
-        # Load cube data
+        # wczytaj obiekty
         with open('cube_data.json') as f:
             data = json.load(f)
         self.cube_data = [(tuple(p1), tuple(p2)) for p1, p2 in data]
@@ -29,7 +29,7 @@ class CameraApp:
         right /= np.linalg.norm(right)
         up = np.cross(right, forward)
 
-        # Construct initial rotation matrix
+        # macierz rotacji
         self.rotation_matrix = np.column_stack((right, up, -forward))
         yaw_180 = np.array([
             [-1, 0, 0],
@@ -38,7 +38,6 @@ class CameraApp:
         ])
         self.rotation_matrix = self.rotation_matrix @ yaw_180
 
-        # Key bindings
         self.root.bind('<w>', lambda e: self.move_forward())
         self.root.bind('<s>', lambda e: self.move_backward())
         self.root.bind('<a>', lambda e: self.move_left())
@@ -57,10 +56,11 @@ class CameraApp:
         self.draw_controls()
         self.redraw()
 
+    # wektory
     def get_view_vectors(self):
         right = self.rotation_matrix[:, 0]
         up = self.rotation_matrix[:, 1]
-        forward = -self.rotation_matrix[:, 2]  # Camera looks along -Z
+        forward = -self.rotation_matrix[:, 2]
         return forward, right, up
 
     def move_forward(self):
@@ -145,13 +145,13 @@ class CameraApp:
 
     def project_point(self, point):
         translated = np.array(point) - self.position
-        rotated = self.rotation_matrix.T @ translated  # Apply inverse rotation
+        rotated = self.rotation_matrix.T @ translated
         x, y, z = rotated
         if z <= 0:
-            return None  # Behind camera
+            return None  # punkt za kamera
         x_proj = (x / z) * self.focal_length
         y_proj = (y / z) * self.focal_length
-        return (400 + x_proj, 300 - y_proj)
+        return 400 + x_proj, 300 - y_proj
 
     def redraw(self):
         self.canvas.delete("all")
