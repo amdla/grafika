@@ -56,7 +56,6 @@ class CameraApp:
         self.draw_controls()
         self.redraw()
 
-    # wektory
     def get_view_vectors(self):
         right = self.rotation_matrix[:, 0]
         up = self.rotation_matrix[:, 1]
