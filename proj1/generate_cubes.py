@@ -16,12 +16,13 @@ def save_cube_data(filename):
 
 
 def generate_cube_grid():
+    size = 8
     cubes = []
     spacing = 1
     cube_size = 1.2
-    for x in range(3):
-        for y in range(3):
-            for z in range(3):
+    for x in range(size):
+        for y in range(size):
+            for z in range(size):
                 base_x = x * (cube_size + spacing)
                 base_y = y * (cube_size + spacing)
                 base_z = z * (cube_size + spacing)
