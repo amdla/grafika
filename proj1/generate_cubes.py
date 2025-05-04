@@ -16,7 +16,7 @@ def save_cube_data(filename):
 
 
 def generate_cube_grid():
-    size = 8
+    size = 4
     cubes = []
     spacing = 1
     cube_size = 1.2
